@@ -845,6 +845,20 @@ function MovementsView({
   const [fromId, setFromId] = useState("");
   const [toId, setToId] = useState("");
   const [note, setNote] = useState("");
+  const [barcode, setBarcode] = useState("");
+
+  const findProductByBarcode = (code: string) => {
+    const normalized = code.trim().toLowerCase();
+    const found = products.find(
+      (p) => p.sku.trim().toLowerCase() === normalized
+    );
+
+    if (found) {
+      setProductId(found.id);
+    }
+
+    return found;
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -872,6 +886,7 @@ function MovementsView({
     }
     setQuantity(1);
     setNote("");
+    setBarcode("");
   };
 
   const labelMovement = (m: import("./types").Movement) => {
@@ -918,6 +933,26 @@ function MovementsView({
                 </option>
               ))}
             </select>
+          </label>
+
+          <label className="field">
+            <span>Código de barras / SKU</span>
+            <input
+              value={barcode}
+              onChange={(e) => {
+                const value = e.target.value;
+                setBarcode(value);
+                findProductByBarcode(value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  findProductByBarcode(barcode);
+                }
+              }}
+              placeholder="Ler ou escrever o código do produto"
+              autoFocus
+            />
           </label>
 
           <label className="field">
